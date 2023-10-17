@@ -8,10 +8,10 @@ class Vector3:
     ) -> None:
         self.x, self.y, self.z = x, y, z
 
-    def length(self):
+    def length(self) -> float:
         return sqrt((self.x * self.x) + (self.y * self.y) + (self.z * self.z))
 
-    def normalize(self):
+    def normalize(self) -> None:
         length = self.length()
         if length > 0:
             inv_length = 1 / length
@@ -19,8 +19,19 @@ class Vector3:
             self.y *= inv_length
             self.z *= inv_length
 
-    def dot(self, other):
+    def dot(self, other) -> Union[int, float]:
         return self.x * other.x + self.y * other.y + self.z * other.z
+    
+    # Cross product method
+    def cross(self, other) -> Self:
+        # Calculate the cross product components
+        cross_x = self.y * other.z - self.z * other.y
+        cross_y = self.z * other.x - self.x * other.z
+        cross_z = self.x * other.y - self.y * other.x
+
+        # Create a new Vector3 instance for the result
+        result = Vector3(cross_x, cross_y, cross_z)
+        return result
 
     def __add__(self, other: Self) -> Self:
         return Vector3(self.x + other.x, self.y + other.y, self.z + other.z)

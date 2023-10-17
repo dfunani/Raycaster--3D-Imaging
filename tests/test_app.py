@@ -1,21 +1,24 @@
 from app import main
-from models.objects import Sphere
-from models.types.objects import RGB, Vector3
+from models.objects import Sphere, Triangle
+from pytest import raises
 
+def test_app_main():
+    x = 0
+    y = 0
+    z = -5
+    radius = 1
+    width = 1
+    height = 1
+    r = 0.8
+    g = 0.1
+    b = 0.1
+    response = main(
+        [
+            ["sphere", [x, y, z, radius, width, height, r, g, b]],
+            ["triangle", [x, y, z, radius, width, height, r, g, b]],
+        ]
+    )
+    assert len(response) == 2
+    assert type(response[0]) == Sphere
+    assert type(response[1]) == Triangle
 
-def test_main():
-    num: int = 5
-    assert list(map(lambda x: type(x), main(num))) == [
-        type(
-            Sphere(
-                position=Vector3(5, 5, 5),
-                radius=Vector3(5, 5, 5).length(),
-                squareRadius=Vector3(5, 5, 5).length(),
-                surfaceColor=RGB(5, 5, 5),
-                emissionColor=RGB(5, 5, 5),
-                transparency=5.0,
-                reflection=5.0,
-            )
-        )
-        for i in range(num)
-    ]

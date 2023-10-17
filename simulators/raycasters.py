@@ -1,6 +1,5 @@
 from math import sqrt, tan
 from typing import Tuple
-from models.objects import Rectangle, Sphere
 from models.types.objects import RGB, Vector3
 from utils import WIDTH, HEIGHT, M_PI, MAX_RAY_DEPTH
 from utils.objects import mix
@@ -129,7 +128,7 @@ def render(spheres: list, filename: str, fov: float = 30) -> None:
             )
 
     # Save result to a PPM image (keep these flags if you compile under Windows)
-    with open(filename, "wb") as ppm_file:
+    with open(filename + ".ppm", "wb") as ppm_file:
         ppm_file.write(bytearray("P6\n", "utf-8"))
         ppm_file.write(bytearray(f"{WIDTH} {HEIGHT}\n255\n", "utf-8"))
         for y in range(HEIGHT):
