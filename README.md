@@ -57,11 +57,24 @@
 </details>
 
 <!-- ABOUT THE PROJECT -->
-
-## About The Project
+<br></br>
 
 <img src="./public/2DLogo.jpeg">
 <br></br>
+
+## About The Project
+
+This repository serves as a comprehensive introduction to ray tracing, delving into the foundational principles and implementation details of this powerful rendering technique. Starting from the basics of ray-object intersections to more advanced concepts like reflection, refraction, and recursive tracing, the content here covers a wide spectrum of ray tracing essentials.
+
+The discussion explores the elegant simplicity of ray tracing algorithms, which, despite their straightforward nature, offer incredible depth in rendering scenes. It highlights the historical evolution of ray tracing, acknowledging its initially prohibitive computational demands and subsequent advancements that have made it a standard in rendering software today.
+
+By following the journey through geometric solutions for ray-object intersections, extending to more sophisticated effects like reflection and refraction computations using algorithms introduced by pioneers like Arthur Appel and Turner Whitted, this repository provides a foundational understanding of how light interacts with objects in a simulated environment.
+
+Moreover, it touches upon critical optimization strategies and techniques used to mitigate the inherent computational cost of ray tracing, paving the way for its widespread adoption in both offline rendering software and the recent advent of real-time ray tracing in gaming.
+
+This collection of discussions and translated code samples, transitioning from C++ to Python, encapsulates the essence of ray tracing fundamentals. Whether you're a beginner seeking a fundamental understanding or an enthusiast looking to deepen your knowledge, this repository serves as a valuable resource in the realm of computer graphics and rendering.
+
+## Raytracing Explained
 
 Within this repository, we explore the fundamentals of 3D rendering. We'll delve into how a 3D scene is transformed into a 2D image for viewing, laying the groundwork for computer-generated imagery (CGI) creation.
 
@@ -197,6 +210,79 @@ However, if the shadow ray intersects with another object before reaching the li
 
 <img src="./public/lightingshadow.gif">
 <br></br>
+
+**Creating a 2D Representation from Ray Tracing**
+
+By repeating the process of shooting rays for every pixel in the image, we generate a two-dimensional representation of our three-dimensional scene (Figure 3). Each pixel's color is determined by the rays cast from the eye through that pixel, interacting with objects in the scene and accounting for illumination and shadow effects.
+
+<img src="./public/pixelrender.gif">
+<br></br>
+
+**Ray Tracing Algorithm Breakdown**
+
+Arthur Appel's 1969 paper introduced this technique, which, despite its elegance, initially faced a significant drawback—speed. Determining ray-geometry intersections is computationally intensive and time-consuming, making ray tracing slower compared to techniques like the z-buffer algorithm.
+
+Over time, advancements in computing power have mitigated this issue, rendering frames that used to take hours in just minutes. Real-time and interactive ray tracers are now feasible due to faster computers and accelerated ray-object intersection routines.
+
+Ray tracing involves two main processes: determining visibility from a pixel to a surface point and shading that point. Both steps demand costly ray-geometry intersection tests, balancing rendering time and accuracy.
+
+Despite video game engines predominantly using rasterization, the advent of GPU-accelerated ray tracing, particularly with RTX technology, has made real-time ray tracing achievable. While games currently offer limited ray tracing effects like sharp reflections and shadows, the offline rendering software industry has widely adopted ray tracing due to its robustness and applicability.
+
+**Ray Tracing Advancements: Reflection and Refraction**
+
+An intriguing advantage of ray tracing lies in its capability to effortlessly simulate intricate effects like reflection and refraction. These effects are particularly useful in rendering materials such as glass or mirror surfaces, adding realism to the scene.
+
+In 1979, Turner Whitted presented a significant advancement in the paper "An Improved Illumination Model for Shaded Display." Whitted's innovation expanded upon Appel's initial ray-tracing algorithm by incorporating computations for reflection and refraction.
+
+This extension allowed for the simulation of rays bouncing off surfaces (reflection) or bending as they pass through different materials (refraction), significantly enhancing the rendering process and enabling more sophisticated and realistic visual effects in computer-generated imagery.
+
+<img src="./public/boule-neige.png">
+<br></br>
+
+**Simulating Reflection and Refraction in Computer Graphics**
+
+In the context of a glass ball exhibiting both reflective and refractive properties, the behavior of a ray interacting with it relies on the ray's direction upon intersection. Computation of reflection and refraction directions considers the normal at the point of intersection and the primary ray's direction.
+
+For computing refraction direction, the material's index of refraction becomes crucial. Refraction alters a ray's path when it moves from one medium to another with a different refractive index, appearing as if the ray bends. The detailed science behind this phenomenon will be explored later, but understanding its dependency on the material's refractive index and surface normals is crucial.
+
+Considering an object like a glass ball exhibiting both reflective and refractive characteristics simultaneously, determining how to blend these effects at a specific surface point poses a challenge. Unlike a simple 50-50 mixing, the blend depends on factors like the angle between the primary ray, object's normal, and the refractive index. The Fresnel equation precisely calculates the appropriate blending values, facilitating accurate simulation of these effects.
+
+For brevity, acknowledging the existence of the Fresnel equation suffices for now, as it significantly aids in determining the proper mixing values for reflection and refraction in complex materials like glass balls.
+
+<img src="./public/reflectionrefraction.gif">
+<br></br>
+
+**Whitted Algorithm Recap: Simulating Reflection and Refraction**
+
+The Whitted algorithm follows a structured process:
+
+Primary Ray Casting: It begins by shooting a primary ray from the eye through each pixel, seeking the closest intersection with objects in the scene.
+
+Interaction with Transparent Surfaces: When the primary ray hits a surface that is not diffuse or opaque (e.g., a glass ball), additional computations are necessary.
+
+Computational Steps for Transparent Surfaces:
+
+Reflection Color Computation: Calculate the color resulting from reflection at that specific point on the surface.
+Refraction Color Computation: Determine the color produced by refraction at the same point.
+Fresnel Equation Application: Use the Fresnel equation to blend or mix the computed reflection and refraction colors appropriately.
+These steps work together to simulate the behavior of transparent materials, such as glass or surfaces exhibiting both reflective and refractive properties. By sequentially computing reflection, refraction, and applying the Fresnel equation, the algorithm accurately models how light interacts with such complex surfaces.
+
+<img src="./public/glassball.png">
+<br></br>
+
+**Reflection and Refraction Computations in Ray Tracing**
+
+Reflection Direction: Compute the reflection direction by considering the primary ray's direction and the normal at the point of intersection. Shoot a reflection ray towards the reflective surface, determining the resulting color by calculating the illumination (shadow ray to the light source) and factoring in light intensity.
+
+Refraction Direction: Calculate the refraction direction when the ray crosses a boundary between media (e.g., glass to air). Determine the refraction angle based on the normal at the hit point, primary ray direction, and material's refractive index. The refraction alters the ray's path as it moves through different media, affecting its direction.
+
+Fresnel Equation: Use the Fresnel equation, considering the refractive index and angle between the primary ray and surface normal, to determine mixing values (Kr and Kt) for reflection and refraction colors.
+
+Mixing Reflection and Refraction: Combine the computed reflection and refraction colors using the mixing values obtained from the Fresnel equation. Ensure that Kr + Kt = 1, as the sum represents the total incoming light, either reflected or refracted.
+
+Recursion and Depth Limitation: The algorithm supports recursion, allowing for interactions with subsequent surfaces. However, setting a maximum recursion depth prevents endless recursive interactions, ensuring computational efficiency and avoiding infinitely bouncing rays, which may result in unfeasible computation times.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
 
