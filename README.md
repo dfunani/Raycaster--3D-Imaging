@@ -60,15 +60,143 @@
 
 ## About The Project
 
-<img src="./public/3DLogo.png">
+<img src="./public/2DLogo.jpeg">
+<br></br>
 
-This Repository explores how a two-dimensional scene is made into a viewable two-dimensional image. Utilizing a computer program to simulate an "artificial" image using "ray-tracing" algorithms. This repository seeks to describe the foundations upon which CGI is built.
+Within this repository, we explore the fundamentals of 3D rendering. We'll delve into how a 3D scene is transformed into a 2D image for viewing, laying the groundwork for computer-generated imagery (CGI) creation.
 
-**How Does an Image Get Created**
+Moving forward in this repository, we'll introduce and discuss the ray-tracing algorithm. Why focus on ray tracing here? It's a powerful method for simulating object visibility in scenes, making it a preferred choice for developing simple programs that generate 3D or computer-generated images.
+
+Initially, we'll build the foundational knowledge around the ray-tracing algorithm. Once we've covered all essential aspects, we'll also explore implementing a scanline renderer within this repository.
+
+For more in-depth details on ray tracing, feel free to explore specific sections or resources dedicated to it within this repository.
 
 <img src="./public/vantagepoint.png">
+<br></br>
+
+**Creating an Image: The Foundation**
+
+To produce an image, we start with a two-dimensional surface—not a point, but an area. Imagine this as a cut through a pyramid, where the top is at our eye's center and the height is aligned with our line of sight. This cut, or slice, is what we call the image plane, akin to the canvas used by painters. It's a crucial concept in computer graphics, serving as the surface where we project our three-dimensional scene.
+
+This idea is fundamental in creating images across various mediums. In photography, it's like the film's surface or the sensor in a digital camera. Similarly, painters use a canvas as their image plane.
+
+Understanding this concept lays the groundwork for creating images on different devices and artistic platforms.
+
+**Drawing a Cube on the Canvas**
+
+Imagine wanting to draw a cube on a blank canvas. To do this, we start by drawing lines from each corner of the cube to our eye. These lines help us map the cube's shape onto the canvas. Each line intersects the canvas, creating points like c0', c1', c2', and c3'.
+
+Let's say c0 is a corner connected to c1, c2, and c3. When we project these points onto the canvas, we get c0', c1', c2', and c3'. Connecting these points on the canvas with lines, following the edges of the cube, creates a two-dimensional representation of the cube.
+
+This technique, called perspective projection, gives us our first image. By applying this method to all objects in a scene, we can create an image showing how the scene looks from a specific viewpoint.
+
+Interestingly, painters began using these rules of perspective projection back in the 15th century to create realistic-looking scenes.
+
+This version simplifies the process of projecting a cube onto a ca
+
+<img src="./public/projperspective.gif">
+<br></br>
+
+**Adding Color and Light to Images**
+
+After outlining three-dimensional objects on a flat surface, the next step is adding colors to complete the picture.
+
+To summarize what we've learned: creating an image from a 3D scene involves two main steps. First, we project the shapes of 3D objects onto the image surface by connecting lines from the object's features to our eye. This step creates an outline on the canvas where these lines intersect the image plane. It's a geometric process. The second step is adding colors to this wireframe, a process called shading.
+
+In a scene, an object's color and brightness come from how light interacts with its materials. Light consists of photons, electromagnetic particles carrying energy that oscillate like sound waves in straight lines. When photons hit an object, they can be absorbed, reflected, or transmitted. The proportions of these actions vary for different materials, determining how the object looks. But no matter what, the total incoming photons equal the sum of reflected, absorbed, and transmitted photons.
+
+In science, we classify materials into two types: conductors (like metals) and dielectrics (like glass, plastic, wood). Dielectrics can be electrical insulators and can be transparent or opaque. For instance, glass and plastic are dielectric materials. Every material has some transparency to certain electromagnetic radiation; for example, X-rays can pass through the human body.
+
+Objects can also have composite or multi-layered materials. For example, an object might be opaque (like wood) but have a transparent varnish on top, creating a mixed appearance of both diffuse and shiny surfaces.
+
+<img src="./public/material.png">
+<br></br>
+
+**Understanding Object Color**
+
+Imagine an opaque and diffuse object. For simplicity, let's say an object's color comes from absorbing certain parts of light. White light consists of "red," "blue," and "green" photons. When white light hits a red object, the object absorbs "green" and "blue" photons but reflects "red" photons. That's why we see the object as red—because the reflected "red" photons reach our eyes.
+
+Each point on an illuminated object reflects light rays in all directions, but only some rays reach our eyes. These rays are what we see. Our eyes have photoreceptors that turn light into signals for our brain to interpret color shades.
+
+This explanation is a simplified view of the color phenomenon. For a more detailed understanding, you can explore the lesson on color in the "Mathematics for Computer Graphics" section.
+
+<img src="./public/lighttoeye.png">
+<br></br>
+
+**Understanding Light Throughout History**
+
+Understanding light has been a journey for humanity, much like grasping perspective projection. Early Greek thinkers believed that objects were seen by rays of light coming from the eyes. It wasn't until the work of Arab scientist Ibn al-Haytham (c. 965-1039) that a new understanding emerged. He explained that sunlight, consisting of streams of tiny particles traveling in straight lines, reflected from objects and formed images in our eyes (Figure 3).
+
+Now, let's explore how we can recreate nature using a computer!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+**Understanding Seeing and Light**
+
+Ibn al-Haytham's observations explain how we see objects. Two intriguing points arise from his insights:
+
+Firstly, our ability to see depends entirely on light. Without light, we can't see anything.
+
+Secondly, for us to perceive light, there must be objects around. In empty spaces like intergalactic regions, where there's no matter, even if photons are present, we perceive only darkness. However, if photons were there and reached our eyes, we would see the image of the object they were reflected from or emitted by.
+
+So, in essence, our vision relies on the presence of both light and objects in our surroundings.
+
+<img src="./public/lighttoeyebounce.png">
+<br></br>
+
+**Understanding Light and Vision in Computer-generated Images**
+
+When simulating how light interacts with objects in computer-generated images, we must consider a key factor: not all the rays reflected by an object will reach our eyes.
+
+Consider this: Imagine a light source that emits only one photon at a time. Let's track what happens to that photon. It travels in a straight line until it strikes the object's surface. Assuming it's reflected (ignoring absorption), it scatters randomly in various directions. If these photons reach the surface of our eye, we perceive the point from which they were reflected (Figure 1).
+
+In essence, while many rays bounce off objects in a scene, only a few of them actually reach our eyes, forming what we perceive in computer-generated images.
+
+Challenges with Forward Ray Tracing in Computer Graphics
+
+When we use forward ray tracing, replacing our eyes with an image plane made of pixels, emitted photons hit pixels on this plane, brightening specific points. This process repeats until all pixels adjust, forming a computer-generated image. However, a problem arises: in reality, reflected rays go in countless directions, with a tiny chance of hitting the eye or a pixel.
+
+Simulating many photons' interactions with objects in a scene is impractical in the computer world. If we try aiming photons directly at the eye's position, it's only effective for certain types of materials, not all. For instance, diffuse surfaces scatter light in various directions, but mirrors reflect light precisely, limiting how we redirect photons.
+
+Even if we only simulate photons on diffuse surfaces, it's challenging. Picture spraying light rays onto an object's surface. Sparse rays won't uniformly illuminate all areas. It's like painting a teapot by dotting it with a marker on a black sheet; some parts remain uncovered until enough dots cover the surface.
+
+<img src="./public/teapotracing.gif">
+<br></br>
+
+Running the program until enough photons cover the surface accurately isn't feasible for production. While creating many photons isn't an issue, tracing their interactions within the scene is computationally expensive, mainly finding ray-geometry intersections.
+
+Forward ray tracing technically mimics light in nature but has practical limitations. Turner Whitted, a computer graphics pioneer, highlighted this limitation in his paper, suggesting an alternate approach—tracing rays from the viewer to objects in the scene.
+
+**Backward Ray-Tracing: Simulating from the Eye**
+
+<img src="./public/tracefromeyetolight.gif">
+<br></br>
+
+Instead of tracing rays from the light source to the eye, backward ray-tracing reverses this process, simulating rays from the eye position (Figure 2) towards the objects. This method, known as backward or eye tracing, addresses some issues faced in forward ray tracing.
+
+In backward tracing, we compromise by tracing rays from the eye into the scene. When a ray hits an object, we assess its light intake by sending another ray (called a shadow ray) from that hit point towards the scene's light source. If this shadow ray is obstructed by another object, the original hit point is in shadow, receiving no light. These rays from the eye into the scene are known as primary rays, visibility rays, or camera rays in computer graphics.
+
+In computer graphics, the general concept of shooting rays from either the light or the eye is termed path tracing. This method involves following the light path to the camera (or vice versa), enabling the simulation of optical effects like caustics or indirect illumination caused by light reflecting off other surfaces in the scene. These aspects will be explored in later lessons.
+
+**Understanding the Basics of Ray Tracing**
+
+Ray tracing, as an algorithm, closely mirrors how light behaves in nature. It's essentially a simulator for the propagation of light, where countless rays bounce until they hit our eyes.
+
+In the ray tracing algorithm, each pixel in an image serves as a starting point. A primary ray is sent from the eye through the center of each pixel into the scene. This ray's direction is determined by the line traced from the eye to the pixel's center.
+
+This primary ray then checks for intersections with every object in the scene. Sometimes, a ray intersects with multiple objects. In such cases, the algorithm selects the object closest to the eye's position. From this intersection point, a shadow ray is shot towards the light source (Figure 1).
+
+<img src="./public/lightingnoshadow.gif">
+<br></br>
+
+**Determining Illumination in Ray Tracing**
+
+In ray tracing, when a shadow ray from an intersection point towards the light source doesn't intersect any other object in its path, that hit point is illuminated (Figure 2). This means that the light reaches the point without obstruction, allowing it to be visible and not in shadow.
+
+However, if the shadow ray intersects with another object before reaching the light source, that object casts a shadow on the hit point. In this scenario, the hit point is not directly illuminated by the light, resulting in a shadow being cast upon it.
+
+<img src="./public/lightingshadow.gif">
+<br></br>
 
 ### Built With
 
