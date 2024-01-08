@@ -9,7 +9,7 @@ def type_checker(function, check:type[Any]=Union[int, float], isMethod:bool=True
             
         for param in kwargs:
             if not isinstance(kwargs[param], check):
-                raise TypeError(f"Argument {param}'s value of {i} is an INVALID Type")
+                raise TypeError(f"Argument {param}'s value of {kwargs[param]} is an INVALID Type")
             
         function(*args, **kwargs)
     return wrapper
@@ -23,7 +23,7 @@ def number_greater_than_checker(function, check:Union[int, float]=0, isMethod:bo
             
         for param in kwargs:
             if kwargs[param] < check:
-                raise ValueError(f"Argument {param}'s value of {i} is less than ZERO")
+                raise ValueError(f"Argument {param}'s value of {kwargs[param]} is less than ZERO")
             
         function(*args, **kwargs)
     return wrapper
