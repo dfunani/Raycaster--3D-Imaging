@@ -2,10 +2,9 @@ from typing import Union, Any
 from math import sqrt
 from utils.decorators import type_checker, number_greater_than_checker
 
-
 class Vector3:
-    @type_checker
-    @number_greater_than_checker
+    @type_checker(checks=Union[int, float])
+    @number_greater_than_checker()
     def __init__(
         self,
         x: Union[int, float] = 0,
@@ -52,3 +51,4 @@ class RGB(Vector3):
         b: Union[int, float] = 0,
     ):
         super().__init__(x=r, y=g, z=b)
+
