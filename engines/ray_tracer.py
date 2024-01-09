@@ -39,7 +39,7 @@ class RayTracer:
                     closest_sphere = sphere
         # if there's no intersection return black or background color
         if not closest_sphere:
-            return Vector3(2, 2, 2)
+            return RGB(2, 2, 2)
 
         # color of the ray/surfaceof the object intersected by the ray
         surfaceColor = RGB()
@@ -86,14 +86,14 @@ class RayTracer:
                 spheres,
                 recursion_depth + 1,
             )
-            refraction: Vector3 = 0
+            refraction: Vector3 = Vector3()
 
             # if the sphere is also transparent compute refraction ray (transmission)
             if closest_sphere.transparency:
                 refractive_index_medium = 1.1
                 refractive_index_outside = (
                     refractive_index_medium
-                    if (inside)
+                    if inside
                     else 1 / refractive_index_medium
                 )  # are we inside or outside the surface?
                 incident_cosine = -surfaceColor.dot(ray_direction)
@@ -159,9 +159,9 @@ class RayTracer:
         image = [[[0 for _ in range(3)] for _ in range(WIDTH)] for _ in range(HEIGHT)]
         inverseWidth = 1 / WIDTH
         inverseHeight = 1 / HEIGHT
-        field_ov_view = 30
+        field_of_view = 30
         aspect_ratio = WIDTH / HEIGHT
-        angle = tan(pi * 0.5 * field_ov_view / 180.0)
+        angle = tan(pi * 0.5 * field_of_view / 180.0)
 
         for y in range(HEIGHT):
             for x in range(WIDTH):
@@ -170,20 +170,25 @@ class RayTracer:
                 ray_direction = Vector3(xx, yy, -1)
                 ray_direction.normalize()
                 pixel_color = RayTracer.trace(Vector3(), ray_direction, spheres, 0)
-                image[y][x] = [int(min(max(0, pixel_color.x), 1) * 255) for i in range(3)]
-        
+                # Normalize color values
+                r = int(min(max(0, pixel_color.x), 1) * 255)
+                g = int(min(max(0, pixel_color.y), 1) * 255)
+                b = int(min(max(0, pixel_color.z), 1) * 255)
+                image[y][x] = [r, g, b]
+
         RayTracer.file_writer(image)
 
-        
+
     @staticmethod
     def file_writer(image, filename="untitled") -> None:
         with open(f"./{filename}.ppm", "wb") as file:
             file.write(f"P6\n{WIDTH} {HEIGHT}\n255\n".encode())
-            for row in image[::-1]:
+            for row in reversed(image[::-1]):
                 for pixel in row:
                     file.write(bytes(pixel))
 
 
 
 
-        
+
+            

@@ -17,7 +17,7 @@ def main() -> Union[list, None]:
     spheres.append(Sphere(Vector3(-5.5,      0, -15),     3, RGB(0.90, 0.90, 0.90), 1, 0.0))
     
     # light
-    spheres.append(Sphere(Vector3( 0.0,     20, -30),     3, RGB(0.00, 0.00, 0.00), 0, 0.0, RGB(3)))
+    spheres.append(Sphere(Vector3( 0.0,     20, -30),     3, RGB(0.00, 0.00, 0.00), 0, 0.0, RGB(3, 3, 3)))
     RayTracer.renderer(spheres)
 
 if __name__ == "__main__":

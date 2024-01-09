@@ -16,21 +16,21 @@ def type_checker(
                 if isinstance(checks, dict) and not isinstance(
                     arg, list(checks.values())[i]
                 ):
-                    raise TypeError(f"Argument at Position {i} is an INVALID {list(checks.values())[i]}")
+                    raise ArgumentError(f"Argument at Position {i} is an INVALID {list(checks.values())[i]}")
                 if not isinstance(checks, dict) and not isinstance(arg, checks):
-                    raise TypeError(f"Argument at Position {i} is an INVALID {checks}")
+                    raise ArgumentError(f"Argument at Position {i} is an INVALID {checks}")
 
             for param in kwargs:
                 if isinstance(checks, dict) and not isinstance(
                     kwargs[param], checks.get(param)
                 ):
-                    raise TypeError(
+                    raise ArgumentError(
                         f"Argument {param}'s value of {kwargs[param]} is an INVALID {checks.get(param)}"
                     )
                 if not isinstance(checks, dict) and not isinstance(
                     kwargs[param], checks
                 ):
-                    raise TypeError(
+                    raise ArgumentError(
                         f"Argument {param}'s value of {kwargs[param]} is an INVALID {checks}"
                     )
 
@@ -55,11 +55,11 @@ def number_greater_than_checker(
             
             for i, arg in enumerate(argsExcludingSelf):
                 if isinstance(arg, Union[int, float]) and arg < check:
-                    raise ValueError(f"Argument at Position {i} is less than {check}")
+                    raise ArgumentError(f"Argument at Position {i} is less than {check}")
 
             for param in kwargs:
                 if isinstance(kwargs[param], Union[int, float]) and kwargs[param] < check:
-                    raise TypeError(
+                    raise ArgumentError(
                         f"Argument {param}'s value of {kwargs[param]} is less than {check}"
                     )
 
