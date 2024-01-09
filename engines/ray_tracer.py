@@ -4,6 +4,7 @@ from models.objects import Sphere
 from . import MAX_RAY_DEPTH, WIDTH, HEIGHT
 from utils.helpers import blend_mix
 from models.vectors import RGB, Vector3
+from utils.decorators import type_checker
 
 
 class RayTracer:
@@ -13,7 +14,7 @@ class RayTracer:
         ray_direction: Vector3,
         spheres: list[Sphere],
         recursion_depth: int,
-    ) -> Vector3:
+    ) -> Union[Vector3, RGB]:
         # This is the main trace function. It takes a ray as argument (defined by its origin
         # and direction). We test if this ray intersects any of the geometry in the scene.
         # If the ray intersects an object, we compute the intersection point, the normal
@@ -44,9 +45,7 @@ class RayTracer:
         # color of the ray/surfaceof the object intersected by the ray
         surfaceColor = RGB()
         # point of intersection
-        intersection_hit: Vector3 = (
-            ray_origin + ray_direction * nearest_intersection
-        )
+        intersection_hit: Vector3 = ray_origin + ray_direction * nearest_intersection
         # normal at the intersection point
         surface_normal: Vector3 = intersection_hit - closest_sphere.center
         # normalize normal direction
@@ -76,8 +75,7 @@ class RayTracer:
             # compute reflection direction (not need to normalize because all vectors
             # are already normalized)
             reflection_direction: Vector3 = (
-                ray_direction
-                - surface_normal * 2 * ray_direction.dot(surface_normal)
+                ray_direction - surface_normal * 2 * ray_direction.dot(surface_normal)
             )
             reflection_direction.normalize()
             reflection: Vector3 = RayTracer.trace(
@@ -92,16 +90,11 @@ class RayTracer:
             if closest_sphere.transparency:
                 refractive_index_medium = 1.1
                 refractive_index_outside = (
-                    refractive_index_medium
-                    if inside
-                    else 1 / refractive_index_medium
+                    refractive_index_medium if inside else 1 / refractive_index_medium
                 )  # are we inside or outside the surface?
                 incident_cosine = -surfaceColor.dot(ray_direction)
-                k_value = (
-                    1
-                    - refractive_index_outside
-                    * refractive_index_outside
-                    * (1 - incident_cosine * incident_cosine)
+                k_value = 1 - refractive_index_outside * refractive_index_outside * (
+                    1 - incident_cosine * incident_cosine
                 )
                 if k_value < 0:
                     k_value = 0
@@ -146,15 +139,15 @@ class RayTracer:
                                 transmission = 0
                                 break
 
-            surfaceColor += (
-                closest_sphere.surfaceColor
-                * transmission
-                * max(float(0), surface_normal.dot(lightDirection))
-                * sphere.emissionColor
-            )
-        
+                    surfaceColor += (
+                        closest_sphere.surfaceColor
+                        * transmission
+                        * max(float(0), surface_normal.dot(lightDirection))
+                        * sphere.emissionColor
+                    )
+
         return surfaceColor + closest_sphere.emissionColor
-            
+
     def renderer(spheres: list[Sphere]) -> None:
         image = [[[0 for _ in range(3)] for _ in range(WIDTH)] for _ in range(HEIGHT)]
         inverseWidth = 1 / WIDTH
@@ -178,7 +171,6 @@ class RayTracer:
 
         RayTracer.file_writer(image)
 
-
     @staticmethod
     def file_writer(image, filename="untitled") -> None:
         with open(f"./{filename}.ppm", "wb") as file:
@@ -186,9 +178,3 @@ class RayTracer:
             for row in reversed(image[::-1]):
                 for pixel in row:
                     file.write(bytes(pixel))
-
-
-
-
-
-            
