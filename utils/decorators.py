@@ -34,7 +34,8 @@ def type_checker(
                         f"Argument {param}'s value of {kwargs[param]} is an INVALID {checks}"
                     )
 
-            function(*args, **kwargs)
+            result = function(*args, **kwargs)
+            return result
 
         return wrapper
 
