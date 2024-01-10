@@ -100,6 +100,7 @@ Standard output ```./app.py```
 
 Standard output ```./test_ray_tracer.py```
 
+For more comprehensive details about the project, check [PROJECT_DETAILS.md](./PROJECT_DETAILS.md).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

@@ -1,7 +1,7 @@
 from typing import TypedDict, Union
+from enum import Enum
 
 
-class Intersection(TypedDict):
-    intersects: bool
-    first_intersection: Union[int, float]
-    second_intersection: Union[int, float]
+class ResponseType(Enum):
+    success = {"code": "SUCCESSFULLY COMPLETED", "message": "", "error": ""}
+    error = {"code": "ERROR ENCOUNTERED", "message": "", "error": ""}
