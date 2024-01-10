@@ -1,74 +1,73 @@
-import os, sys
-from typing import Union
-from models.types.objects import RGB, Vector3
-from simulators.raycasters import render
-from models.objects import Rectangle, Sphere, Triangle
+"""App.py
+Responsible for creating the scene. 
+By placing Spheres on the Image plane,
+using Vector3 and RGB components,
+various image scenes can be exported to file.
+"""
 
-OBJECTS = {"sphere": Sphere, "rectangle": Rectangle, "triangle": Triangle}
+from json import dumps
+from typing import Union
+from models.vectors import RGB, Vector3
+from models.objects import Sphere
+from engines.ray_tracer import RayTracer
+from utils.types.interfaces import ResponseType
+from utils.types.exceptions import ArgumentError
 
 
 # // In the main function, we will create the scene which is composed of 5 spheres
 # // and 1 light (which is also a sphere). Then, once the scene description is complete
 # // we render that scene, by calling the render() function.
-def main(objects: list) -> Union[list, None]:
-    try:
-        response: list = []
-        for object in objects:
-            try:
-                obj, specs = object
-                x = float(specs[0])
-                y = float(specs[1])
-                z = float(specs[2])
-                radius = int(specs[3])
-                width = int(specs[4])
-                height = int(specs[5])
-                r = float(specs[6])
-                g = float(specs[7])
-                b = float(specs[8])
+def main() -> ResponseType:
+    """Project Entry Point for creating an Image Scene
 
-                response.append(
-                    OBJECTS[obj](
-                        position=Vector3(x, y, z),  # Position of the sphere
-                        radius=radius,
-                        width=width,
-                        height=height,
-                        surfaceColor=Vector3(0.8, 0.1, 0.1),  # Green color
-                        emissionColor=Vector3(r, g, b),  # No emission
-                    )
-                )
-            except BaseException as ee:
-                print(str(ee))
+    Returns:
+        ResponseType: Success or Error depending on runtime
+    """
+    spheres: list[spheres] = []
+    response: Union[ResponseType, None] = None
+
+    try:
+        # Spheres
+        spheres.append(
+            Sphere(Vector3(0.0, -10004, -20), 10000, RGB(0.20, 0.20, 0.20), 0, 0.0)
+        )
+        spheres.append(Sphere(Vector3(0.0, 0, -20), 4, RGB(1.00, 0.32, 0.36), 1, 0.5))
+        spheres.append(Sphere(Vector3(5.0, -1, -15), 2, RGB(0.90, 0.76, 0.46), 1, 0.0))
+        spheres.append(Sphere(Vector3(5.0, 0, -25), 3, RGB(0.65, 0.77, 0.97), 1, 0.0))
+        spheres.append(Sphere(Vector3(-5.5, 0, -15), 3, RGB(0.90, 0.90, 0.90), 1, 0.0))
+    except (ArgumentError, ValueError, TypeError) as error:
+        response = ResponseType.error
+        response.value["message"] = "Couldn't create sphere(s)"
+        response.value["error"] = str(error)
+
+    # light
+    try:
+        spheres.append(
+            Sphere(
+                Vector3(0.0, 20, -30), 3, RGB(0.00, 0.00, 0.00), 0, 0.0, RGB(3, 3, 3)
+            )
+        )
+    except (ArgumentError, ValueError, TypeError) as error:
+        response = ResponseType.error
+        response.value["message"] = "Couldn't create light(s)"
+        response.value["error"] = str(error)
+
+    # Scene Renderer/Exporter
+    try:
+        RayTracer.renderer(spheres, "sample_file")
+    except (ArgumentError, ValueError, TypeError) as error:
+        response = ResponseType.error
+        response.value["message"] = "Couldn't create scene(s)"
+        response.value["error"] = str(error)
+
+    if response:
         return response
-    except BaseException as e:
-        print(e)
+
+    response = ResponseType.success
+    response.value["message"] = "Image Successfully exported"
+    return response
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        sys.exit(
-            "[run command] [file] filename [object]='position.x;position.y;position.z;radius;width;height;r;g;b' [objec..."
-        )
-
-    try:
-        # Image export file name
-        filename = sys.argv[1].replace(".", "")
-
-        # Args deconstructed - Requested Objects and their specs
-        requestedObjects: list = list(
-            filter(
-                lambda y: len(y) == 2 and y[0] in OBJECTS.keys(),
-                list(map(lambda x: x.split("="), sys.argv)),
-            )
-        )
-
-        # Desconstruct the Requested Object Specs into [position.x, position.y, position.z, radius, width, height, r, g, b, transparency, reflection]
-        objects: list = list(map(lambda x: [x[0], x[1].split(";")], requestedObjects))
-
-        image = main(objects)
-        print(image)
-        if image:
-            render(image, filename)
-        else:
-            raise Exception("Couldn't Load Objects")
-    except Exception as e:
-        sys.exit(str(e))
+    result = main()
+    print(dumps(result.value, indent=4))
