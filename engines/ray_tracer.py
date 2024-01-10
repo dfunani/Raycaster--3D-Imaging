@@ -1,13 +1,24 @@
+"""The Engine Module is responsible for
+exposing render, tracing and writing
+capabiltiies to the application
+"""
+
 from math import inf, pi, sqrt, tan
 from typing import Union
-from models.objects import Sphere
+
 from . import MAX_RAY_DEPTH, WIDTH, HEIGHT
 from utils.helpers import blend_mix
+
+from models.objects import Sphere
 from models.vectors import RGB, Vector3
 from utils.decorators import type_checker
 
 
 class RayTracer:
+    """Singleton class created to expose
+    the the required engine components of
+    the Ray Tracing Algorithm"""
+
     @staticmethod
     def trace(
         ray_origin: Vector3,
@@ -15,15 +26,33 @@ class RayTracer:
         spheres: list[Sphere],
         recursion_depth: int,
     ) -> Union[Vector3, RGB]:
-        # This is the main trace function. It takes a ray as argument (defined by its origin
-        # and direction). We test if this ray intersects any of the geometry in the scene.
-        # If the ray intersects an object, we compute the intersection point, the normal
-        # at the intersection point, and shade this point using this information.
-        # Shading depends on the surface property (is it transparent, reflective, diffuse).
-        # The function returns a color for the ray. If the ray intersects an object that
-        # is the color of the object at the intersection point, otherwise it returns
-        # the background color.
-        # Check if ray_direction is a unit vector (has length 1)
+        """This is the main trace function. It takes a ray as argument (defined by its origin
+        and direction). We test if this ray intersects any of the geometry in the scene.
+        If the ray intersects an object, we compute the intersection point, the normal
+        at the intersection point, and shade this point using this information.
+        Shading depends on the surface property (is it transparent, reflective, diffuse).
+        The function returns a color for the ray. If the ray intersects an object that
+        is the color of the object at the intersection point, otherwise it returns
+        the background color.
+        Check if ray_direction is a unit vector (has length 1)
+
+        Args:
+            ray_origin (Vector3): Represents the source of the ray that initiates the trace.
+            ray_direction (Vector3): Defines the direction in which the ray is moving.
+            spheres (list[Sphere]): A list containing the
+            spheres in the scene that the ray might intersect with.
+            recursion_depth (int): Indicates the recursion depth, determining how many times
+            the function will recursively trace secondary rays. This helps simulate effects
+            like reflections or refractions.
+
+
+        Returns:
+            Union[Vector3, RGB]: The return value of the trace
+            function represents the color observed along
+            the traced ray path. It captures the resulting color or
+            light information perceived after
+            interacting with the scene elements, such as spheres and lighting sources.
+        """
 
         nearest_intersection = inf
         closest_sphere: Union[None, Sphere] = None
@@ -149,6 +178,13 @@ class RayTracer:
         return surfaceColor + closest_sphere.emissionColor
 
     def renderer(spheres: list[Sphere], filename="untiled") -> None:
+        """
+        Renders the scene described by the spheres and saves the image to a specified filename.
+
+        Args:
+            spheres (List[Sphere]): A list of Sphere objects defining the scene.
+            filename (str, optional): The name of the output file. Defaults to "untitled".
+        """
         image = [[[0 for _ in range(3)] for _ in range(WIDTH)] for _ in range(HEIGHT)]
         inverseWidth = 1 / WIDTH
         inverseHeight = 1 / HEIGHT
@@ -173,6 +209,12 @@ class RayTracer:
 
     @staticmethod
     def file_writer(image, filename="untitled") -> None:
+        """Writes the image bytes to a file.
+
+        Args:
+            image (_type_): Image Buffer to write.
+            filename (str, optional): Name to be given to the exported file. Defaults to "untitled".
+        """
         with open(f"./{filename}.ppm", "wb") as file:
             file.write(f"P6\n{WIDTH} {HEIGHT}\n255\n".encode())
             for row in reversed(image[::-1]):
