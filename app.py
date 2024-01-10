@@ -18,7 +18,7 @@ def main() -> Union[list, None]:
     
     # light
     spheres.append(Sphere(Vector3( 0.0,     20, -30),     3, RGB(0.00, 0.00, 0.00), 0, 0.0, RGB(3, 3, 3)))
-    RayTracer.renderer(spheres)
+    RayTracer.renderer(spheres, "sample_file")
 
 if __name__ == "__main__":
     main()

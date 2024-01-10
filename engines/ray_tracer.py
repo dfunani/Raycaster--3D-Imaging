@@ -148,7 +148,7 @@ class RayTracer:
 
         return surfaceColor + closest_sphere.emissionColor
 
-    def renderer(spheres: list[Sphere]) -> None:
+    def renderer(spheres: list[Sphere], filename="untiled") -> None:
         image = [[[0 for _ in range(3)] for _ in range(WIDTH)] for _ in range(HEIGHT)]
         inverseWidth = 1 / WIDTH
         inverseHeight = 1 / HEIGHT
@@ -169,7 +169,7 @@ class RayTracer:
                 b = int(min(max(0, pixel_color.z), 1) * 255)
                 image[y][x] = [r, g, b]
 
-        RayTracer.file_writer(image)
+        RayTracer.file_writer(image, filename)
 
     @staticmethod
     def file_writer(image, filename="untitled") -> None:
